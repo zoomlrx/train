@@ -1,0 +1,169 @@
+<!DOCTYPE html><!--声明HTML文件-->
+<html lang="en"><!--根标签,网页的开始,lang表示可以翻译-->
+<head><!--给浏览器看得信息-->
+    <meta charset="UTF-8"><!--编码格式为国际编码UTF-8-->
+    <meta name="Generator" content="EditPlus®">
+    <meta name="Author" content="">
+    <meta name="Keywords" content=""><!--为搜索引擎提供关键字列表-->
+    <meta name="Description" content=""><!--对网页的描述,给搜素引擎抓取-->
+    <title>Document</title>
+    <style type="text/css">
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        html,body {
+
+            width:100%;
+            height: 100%;
+            background:black;
+            display:flex;
+            font-family: "Microsoft Yahei";
+            perspective: 800px;  /*景深,人眼看到的和我们的距离,正前方距离,能够看得出3d效果*/
+            transform-style:preserve-3d ; /*真正的3d效果*/
+            overflow: hidden;
+        }
+
+        ul, ol {
+            list-style: none;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        #box{
+            width:100px;
+            height:100px;
+            border:1px solid yellow;
+            margin:auto;
+            position: relative;
+
+            transform-style:preserve-3d ; /*真正的3d效果*/
+            color:red;
+            background:rgba(0,255,0,0.3);
+            transform: rotateX(-20deg);
+        }
+        #box img{
+            width:100%;
+            height:100%;
+            position: absolute;
+            top:0;
+            left:0;
+            -webkit-box-reflect: below 10px -webkit-linear-gradient(
+                    top,  /*从上到下*/
+                    rgba(0,0,0,0.1) 50%,
+                    rgba(0,0,0,0.6));
+        }
+
+        #box p{
+            position:absolute;
+            left:50%;
+            top: 50%;
+            margin: -400px 0 0 -400px;
+            width:800px;
+            height:800px;
+            background:-webkit-radial-gradient(
+                    center center,  /*中心点*/
+                    600px 600px,     /*辐射范围*/
+                    rgba(50,50,50,1),rgba(0,0,0,0));   /*颜色*/
+            border-radius: 50%;
+            transform:translateY(50px) rotateX(90deg);
+        }
+    </style>
+</head>
+<body>
+    <div id="box">
+        3D图片旋转
+        <img src="./img/login.png" alt="">
+        <img src="./img/login.png" alt="">
+        <img src="./img/login.png" alt="">
+        <img src="./img/login.png" alt="">
+        <img src="./img/login.png" alt="">
+        <img src="./img/login.png" alt="">
+        <img src="./img/login.png" alt="">
+        <img src="./img/login.png" alt="">
+        <img src="./img/login.png" alt="">
+        <img src="./img/login.png" alt="">
+        <img src="./img/login.png" alt="">
+        <img src="./img/login.png" alt="">
+        <p></p>
+    </div>
+    <script>
+        window.onload=function(){
+            var oImg=box.getElementsByTagName('img');
+            for(var i=0;i<oImg.length;i++){
+                oImg[i].style.transform='rotateY('+30*i+'deg) translateZ(200px)';
+                oImg[i].style.transition = 'transform 2s '+(oImg.length-i)*0.1+'s'; //过渡
+            }
+            var n=0;
+            var nowX,
+                nowY,
+                lastX,
+                lastY,
+                desX,   //两个X距离
+                desY,   //两个Y距离
+                rotX=0,   //延X旋转角度
+                rotY=0,   //延Y旋转角度
+                timer;
+            document.onmousedown=function(e){
+                var e = e|| event;
+                lastX = e.clientX;
+                lastY = e.clientY;
+                clearInterval(timer);
+                this.onmousemove=function(e){
+                    var e = e|| event;
+                    //当前点的坐标
+                    nowX = e.clientX; //鼠标离可视区左边的距离
+                    nowY = e.clientY;//鼠标离可视区右边的距离
+
+                    //当前点坐标与前一个点的距离
+                    desX = nowX-lastX;
+                    desY = nowY-lastY;
+                    rotY +=desX*0.5;
+                    rotX -=desY*0.5;
+
+                    //怎样旋转
+                    //鼠标沿着水平方向移动 Box要rotateX旋转
+                    //鼠标沿着竖直方向移动 Box要rotateY旋转
+                    //鼠标移动越快,两点间距离越大,旋转角度越大
+                    //旋转角度要一直累加
+
+                    box.style.transform='rotateX('+rotX+'deg) rotateY('+rotY+'deg)';
+
+
+
+
+                    //前一个点的坐标更新
+                    lastX = nowX;
+                    lastY = nowY;
+
+
+
+
+
+                };
+                this.onmouseup=function(){
+
+                    this.onmousemove=this.onmouseup=null;
+
+                    timer=setInterval(function(){
+                        desX*=0.95;  //惯性 度数递减,接近于0
+                        desY*=0.95;
+                        rotY +=desX*0.5;
+                        rotX -=desY*0.5;
+                        box.style.transform='rotateX('+rotX+'deg) rotateY('+rotY+'deg)';
+                        if(Math.abs(desX)<0.5&&Math.abs(desY)<0.5){
+                            clearInterval(timer);
+                        }
+                    },13);
+
+
+                };
+                return false;
+            }
+        }
+    </script>
+</body>
+</html>
